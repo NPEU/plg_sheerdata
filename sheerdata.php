@@ -85,7 +85,7 @@ class plgCSVUploadsSHEERData extends JPlugin
                 'id'          => $this->clean($row['ID']),
                 'short_title' => $this->clean($row['Short Title']),
                 'long_title'  => $this->clean($row['Long Title']),
-                'alias'       => isset($row['Web alias']) ? $this->clean($row['Web alias']) : $this->html_id($row['Title'], 'Y'),
+                'alias'       => isset($row['Web Alias']) ? $this->clean($row['Web Alias']) : $this->html_id($row['Short Title'], 'Y'),
                 'state'       => $this->clean($row['State']),
                 'ordering'    => $this->clean($row['Order'])
             );
