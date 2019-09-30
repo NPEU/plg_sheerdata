@@ -81,26 +81,13 @@ class plgCSVUploadsSHEERData extends JPlugin
         $sql = array();
         foreach ($csv as  $row) {
 
-            $rec_end   = $this->clean_year($row['Rec. end']);
-            $grant_end = $this->clean_year($row['Grant end']);
-            $any_end   = 'Null';
-            if (is_numeric($rec_end) && is_numeric($grant_end)) {
-                $any_end = max((int) $rec_end, (int) $grant_end);
-            } else {
-                if ($rec_end == 'Null') {
-                    $any_end = $grant_end;
-                } else {
-                    $any_end = $rec_end;
-                }
-            }
-
             $data = array(
                 'id'          => $this->clean($row['ID']),
-                'short_title' => $this->clean($row['Title']),
+                'short_title' => $this->clean($row['Short Title']),
                 'long_title'  => $this->clean($row['Long Title']),
                 'alias'       => isset($row['Web alias']) ? $this->clean($row['Web alias']) : $this->html_id($row['Title'], 'Y'),
-                'state'       => $this->html_id(preg_replace('/\d/', '', $row['Status'])),
-                'ordering'    => $this->clean($row['Status'])
+                'state'       => $this->html_id(preg_replace('/\d/', '', $row['State'])),
+                'ordering'    => $this->clean($row['Order'])
             );
 
             if (in_array($row['ID'], $ids)) {
