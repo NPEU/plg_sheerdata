@@ -3,32 +3,53 @@
  * @package     Joomla.Plugin
  * @subpackage  CSVUploads.SHEERData
  *
- * @copyright   Copyright (C) NPEU 2019.
+ * @copyright   Copyright (C) NPEU 2024.
  * @license     MIT License; see LICENSE.md
  */
 
+namespace NPEU\Plugin\CSVUploads\SHEERData\Extension;
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Event\Event;
+use Joomla\Event\SubscriberInterface;
+
 /**
- * Save data tot eh SHEER database when CSV is uploaded.
+ * Save data to the SHEER database when CSV is uploaded.
  */
-class plgCSVUploadsSHEERData extends JPlugin
+class SHEERData extends CMSPlugin implements SubscriberInterface
 {
     protected $autoloadLanguage = true;
 
     protected $t_db;
 
     /**
-     * Method to instantiate the indexer adapter.
+     * An internal flag whether plugin should listen any event.
      *
-     * @param   object  &$subject  The object to observe.
-     * @param   array   $config    An array that holds the plugin configuration.
+     * @var bool
+     *
+     * @since   4.3.0
+     */
+    protected static $enabled = false;
+
+    /**
+     * Constructor
      *
      */
-    public function __construct(&$subject, $config)
+    public function __construct($subject, array $config = [], bool $enabled = true)
     {
+        // The above enabled parameter was taken from the Guided Tour plugin but it always seems
+        // to be false so I'm not sure where this param is passed from. Overriding it for now.
+        $enabled = true;
+
+
+        #$this->loadLanguage();
+        $this->autoloadLanguage = $enabled;
+        self::$enabled          = $enabled;
+
         parent::__construct($subject, $config);
-        $this->loadLanguage();
 
         // The following file is excluded from the public git repository (.gitignore) to prevent
         // accidental exposure of database credentials. However, you will need to create that file
@@ -41,26 +62,42 @@ class plgCSVUploadsSHEERData extends JPlugin
         // if you prefer to store these elsewhere, then the database_credentials.php can instead
         // require another file or indeed any other mechansim of retrieving the credentials, just so
         // long as those four variables are assigned.
-        require_once('database_credentials.php');
+        require_once(realpath(dirname(dirname(__DIR__))) . '/database_credentials.php');
 
         try {
-            $this->t_db = new PDO("mysql:host=$hostname;dbname=$database", $username, $password, array(
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8;'
-            ));
+            $this->t_db = new \PDO("mysql:host=$hostname;dbname=$database", $username, $password, [
+                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8;'
+            ]);
         }
-        catch(PDOException $e) {
+        catch(\PDOException $e) {
             echo $e->getMessage();
             exit;
         }
     }
 
     /**
+     * function for getSubscribedEvents : new Joomla 4 feature
+     *
+     * @return array
+     *
+     * @since   4.3.0
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return self::$enabled ? [
+            'onAfterLoadCSV' => 'onAfterLoadCSV',
+        ] : [];
+    }
+
+    /**
      * @param   array  $csv  Array holding data
      *
-     * @return  mixed  Boolean true on success or String 'STOP'
+     * @return  string 'STOP'
      */
-    public function onAfterLoadCSV($csv, $filename)
+    public function onAfterLoadCSV(Event $event): string
     {
+        [$csv, $filename] = array_values($event->getArguments());
+
         if ($filename != 'sheer-data.csv') {
             return false;
         }
@@ -70,25 +107,25 @@ class plgCSVUploadsSHEERData extends JPlugin
         $stmt = $this->t_db->prepare($sql);
         $stmt->execute();
 
-        $ids  = array();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $ids  = [];
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         foreach($rows as $row) {
             $ids[] = $row['id'];
         }
 
         // Remove first row as it's heading names:
         #array_shift( $csv );
-        $sql = array();
+        $sql = [];
         foreach ($csv as  $row) {
 
-            $data = array(
+            $data = [
                 'id'          => $this->clean($row['ID']),
                 'short_title' => $this->clean($row['Short Title']),
                 'long_title'  => $this->clean($row['Long Title']),
                 'alias'       => isset($row['Web Alias']) ? $this->clean($row['Web Alias']) : $this->html_id($row['Short Title'], 'Y'),
                 'state'       => $this->clean($row['State']),
                 'ordering'    => $this->clean($row['Order'])
-            );
+            ];
 
             if (in_array($row['ID'], $ids)) {
                 // Update
@@ -113,14 +150,14 @@ class plgCSVUploadsSHEERData extends JPlugin
         try {
             $this->t_db->query($sql);
         }
-        catch(PDOException $e) {
+        catch(\PDOException $e) {
             echo $e->getMessage();
             exit;
         }
 
         return 'STOP';
     }
-    
+
     /**
      * Creates an HTML-friendly string for use in id's
      *
