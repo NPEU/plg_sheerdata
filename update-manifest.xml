@@ -6,58 +6,7 @@
         <element>sheerdata</element>
         <type>plugin</type>
         <folder>csvuploads</folder>
-        <version>1.0.0</version>
-        <client>site</client>
-        <infourl title="NPEU: plg_sheerdata">https://github.com/NPEU/plg_sheerdata/releases/tag/v1.0.0</infourl>
-        <downloads>
-            <downloadurl type="full" format="zip">https://github.com/NPEU/plg_sheerdata/archive/v1.0.0.zip</downloadurl>
-        </downloads>
-        <targetplatform name="joomla" />
-        <tags>
-            <tag>stable</tag>
-        </tags>
-    </update>
-    <update>
-        <name>NPEU: plg_sheerdata</name>
-        <description>Joomla! plg_sheerdata plugin</description>
-        <element>sheerdata</element>
-        <type>plugin</type>
-        <folder>csvuploads</folder>
-        <version>1.0.1</version>
-        <client>site</client>
-        <infourl title="NPEU: plg_sheerdata">https://github.com/NPEU/plg_sheerdata/releases/tag/v1.0.1</infourl>
-        <downloads>
-            <downloadurl type="full" format="zip">https://github.com/NPEU/plg_sheerdata/archive/v1.0.1.zip</downloadurl>
-        </downloads>
-        <targetplatform name="joomla" />
-        <tags>
-            <tag>stable</tag>
-        </tags>
-    </update>
-    <update>
-        <name>NPEU: plg_sheerdata</name>
-        <description>Joomla! plg_sheerdata plugin</description>
-        <element>sheerdata</element>
-        <type>plugin</type>
-        <folder>csvuploads</folder>
-        <version>1.0.2</version>
-        <client>site</client>
-        <infourl title="NPEU: plg_sheerdata">https://github.com/NPEU/plg_sheerdata/releases/tag/v1.0.2</infourl>
-        <downloads>
-            <downloadurl type="full" format="zip">https://github.com/NPEU/plg_sheerdata/archive/v1.0.2.zip</downloadurl>
-        </downloads>
-        <targetplatform name="joomla" />
-        <tags>
-            <tag>stable</tag>
-        </tags>
-    </update>
-    <update>
-        <name>NPEU: plg_sheerdata</name>
-        <description>Joomla! plg_sheerdata plugin</description>
-        <element>sheerdata</element>
-        <type>plugin</type>
-        <folder>csvuploads</folder>
-        <version>1.0.3</version>
+        <version>4.0.0</version>
         <client>site</client>
         <infourl title="NPEU: plg_sheerdata">https://github.com/NPEU/plg_sheerdata/releases/tag/v1.0.3</infourl>
         <downloads>
